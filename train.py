@@ -12,14 +12,14 @@ import os
 import sys
 
 if len(sys.argv) != 2:
-	sys.exit("Use: python train.py <dataset>")
+    sys.exit("Use: python train.py <dataset>")
 
 datasets = ['20ng', 'R8', 'R52', 'ohsumed', 'mr']
 dataset = sys.argv[1]
+# dataset = '20ng'
 
 if dataset not in datasets:
-	sys.exit("wrong dataset name")
-
+    sys.exit("wrong dataset name")
 
 # Set random seed
 seed = random.randint(1, 200)
@@ -29,7 +29,7 @@ tf.set_random_seed(seed)
 # Settings
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
-flags = tf.app.flags
+flags = tf.flags
 FLAGS = flags.FLAGS
 # 'cora', 'citeseer', 'pubmed'
 flags.DEFINE_string('dataset', dataset, 'Dataset string.')
@@ -111,25 +111,22 @@ for epoch in range(FLAGS.epochs):
 
     t = time.time()
     # Construct feed dictionary
-    feed_dict = construct_feed_dict(
-        features, support, y_train, train_mask, placeholders)
+    feed_dict = construct_feed_dict(features, support, y_train, train_mask, placeholders)
     feed_dict.update({placeholders['dropout']: FLAGS.dropout})
 
     # Training step
-    outs = sess.run([model.opt_op, model.loss, model.accuracy,
-                     model.layers[0].embedding], feed_dict=feed_dict)
+    outs = sess.run([model.opt_op, model.loss, model.accuracy, model.layers[0].embedding], feed_dict=feed_dict)
 
     # Validation
-    cost, acc, pred, labels, duration = evaluate(
-        features, support, y_val, val_mask, placeholders)
+    cost, acc, pred, labels, duration = evaluate(features, support, y_val, val_mask, placeholders)
     cost_val.append(cost)
 
     print("Epoch:", '%04d' % (epoch + 1), "train_loss=", "{:.5f}".format(outs[1]),
           "train_acc=", "{:.5f}".format(
-              outs[2]), "val_loss=", "{:.5f}".format(cost),
+            outs[2]), "val_loss=", "{:.5f}".format(cost),
           "val_acc=", "{:.5f}".format(acc), "time=", "{:.5f}".format(time.time() - t))
 
-    if epoch > FLAGS.early_stopping and cost_val[-1] > np.mean(cost_val[-(FLAGS.early_stopping+1):-1]):
+    if epoch > FLAGS.early_stopping and cost_val[-1] > np.mean(cost_val[-(FLAGS.early_stopping + 1):-1]):
         print("Early stopping...")
         break
 
