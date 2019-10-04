@@ -160,7 +160,6 @@ class GCN(Model):
         self.labels = tf.argmax(self.placeholders['labels'], 1)
 
     def _build(self):
-
         self.layers.append(GraphConvolution(input_dim=self.input_dim,
                                             output_dim=FLAGS.hidden1,
                                             placeholders=self.placeholders,
@@ -173,7 +172,7 @@ class GCN(Model):
         self.layers.append(GraphConvolution(input_dim=FLAGS.hidden1,
                                             output_dim=self.output_dim,
                                             placeholders=self.placeholders,
-                                            act=lambda x: x, #
+                                            act=lambda x: x,  #
                                             dropout=True,
                                             logging=self.logging))
 
